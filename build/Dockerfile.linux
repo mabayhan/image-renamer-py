@@ -1,7 +1,10 @@
 # Linux builder: freezes main.py into a single executable with PyInstaller.
-FROM python:3.12-slim-bookworm
+# Uses Debian's Python (python3-tk) so Tcl/Tk is available to bundle; the
+# python:slim images ship without Tk and produce a binary that cannot import tkinter.
+FROM debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
- && apt-get install -y --no-install-recommends binutils \
+ && apt-get install -y --no-install-recommends python3 python3-venv python3-pip python3-tk libpython3.11 binutils \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 CMD ["bash", "/src/build/build-linux.sh"]
