@@ -1,0 +1,22 @@
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Windows and Linux executables on the container host and publish release
+        uses: https://github.com/appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          command_timeout: 60m
+          script_stop: true
+          script: |
+            export RELEASE_TOKEN='${{ secrets.RELEASE_TOKEN }}' FORGEJO_URL='${{ github.server_url }}' REPOSITORY='${{ github.repository }}'
+            curl -fsS -H "Authorization: token $RELEASE_TOKEN" "$FORGEJO_URL/$REPOSITORY/raw/commit/${{ github.sha }}/build/ci-build.sh" -o /tmp/image-renamer-ci-build.sh
+            bash /tmp/image-renamer-ci-build.sh '${{ github.ref_name }}' '${{ github.sha }}'

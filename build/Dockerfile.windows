@@ -1,0 +1,24 @@
+# Windows builder: freezes main.py with Windows Python (nuget build, includes Tk) under Wine.
+FROM debian:trixie-slim
+ARG WIN_PYTHON_VERSION=3.12.10
+ENV DEBIAN_FRONTEND=noninteractive \
+    WINEPREFIX=/opt/wine WINEARCH=win64 WINEDEBUG=-all WINEDLLOVERRIDES="mscoree,mshtml="
+RUN dpkg --add-architecture i386 \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates curl wget unzip gnupg xvfb xauth \
+ && mkdir -pm755 /etc/apt/keyrings \
+ && wget -qO /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key \
+ && wget -qNP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources \
+ && apt-get update \
+ && apt-get install -y --install-recommends winehq-stable \
+ && rm -rf /var/lib/apt/lists/*
+RUN wineboot --init && wineserver -w \
+ && curl -sSLo /tmp/python.nupkg "https://www.nuget.org/api/v2/package/python/${WIN_PYTHON_VERSION}" \
+ && unzip -q /tmp/python.nupkg 'tools/*' -d /tmp/python \
+ && mv /tmp/python/tools /opt/winpython \
+ && rm -rf /tmp/python /tmp/python.nupkg \
+ && (wine /opt/winpython/python.exe -m pip --version || wine /opt/winpython/python.exe -m ensurepip) \
+ && wine /opt/winpython/python.exe -m pip install -q --upgrade pip \
+ && wineserver -w
+WORKDIR /src
+CMD ["bash", "/src/build/build-windows.sh"]
