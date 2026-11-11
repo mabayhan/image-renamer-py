@@ -12,6 +12,12 @@ names. It can also resize and recompress them in the same pass.
 - Image preview with a cached preview store for fast browsing
 - Light and dark theme
 
+| Light | Dark |
+|-------|------|
+| ![Image Renamer, light theme](docs/screenshots/app-light.png) | ![Image Renamer, dark theme](docs/screenshots/app-dark.png) |
+
+_Screenshots use generated sample images._
+
 ## Contents
 
 1. [Download](#1-download)
