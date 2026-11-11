@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd /src
-PY="wine /opt/winpython/python.exe"
+PY="wine C:\\Python312\\python.exe"
 $PY -m pip install -q -r requirements-build.txt
 $PY -m PyInstaller --noconfirm --onefile --windowed --hidden-import PIL._tkinter_finder --name ImageRenamer \
     --distpath 'Z:\tmp\dist' --workpath 'Z:\tmp\work' --specpath 'Z:\tmp\spec' main.py
