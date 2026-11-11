@@ -8,3 +8,6 @@ $PY -m PyInstaller --noconfirm --onefile --windowed --name ImageRenamer \
 wineserver -w
 mkdir -p dist
 cp /tmp/dist/ImageRenamer.exe "dist/ImageRenamer-${APP_VERSION:-dev}-windows-x86_64.exe"
+
+# hand the output back to the host user (containers run as root)
+chown -R "${HOST_UID:-0}:${HOST_GID:-0}" /src

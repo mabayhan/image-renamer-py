@@ -17,6 +17,7 @@ jobs:
           command_timeout: 60m
           script_stop: true
           script: |
+            export GH_TOKEN='${{ secrets.GH_TOKEN }}'
             export RELEASE_TOKEN='${{ secrets.RELEASE_TOKEN }}' FORGEJO_URL='${{ github.server_url }}' REPOSITORY='${{ github.repository }}'
             curl -fsS -H "Authorization: token $RELEASE_TOKEN" "$FORGEJO_URL/$REPOSITORY/raw/commit/${{ github.sha }}/build/ci-build.sh" -o /tmp/image-renamer-ci-build.sh
             bash /tmp/image-renamer-ci-build.sh '${{ github.ref_name }}' '${{ github.sha }}'
